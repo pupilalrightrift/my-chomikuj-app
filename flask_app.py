@@ -63,3 +63,16 @@ def browse():
     return render_template('browse.html',
                            username=chomik_client.username,
                            files=files)
+
+
+    
+    try:
+        files = chomik_client.list_files()
+    except Exception as e:
+        flash(f'Błąd pobierania listy plików: {e}', 'error')
+        files = []
+
+    return render_template('browse.html',
+                           username=chomik_client.username,
+                           files=files)
+
