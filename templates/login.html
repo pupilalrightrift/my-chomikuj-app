@@ -1,32 +1,135 @@
-{% extends "base.html" %}
-{% block title %}Logowanie{% endblock %}
-{% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6 col-lg-5">
-    <div class="card shadow-sm">
-      <div class="card-body p-4">
-        <h3 class="card-title text-center mb-4">Zaloguj się</h3>
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie do Chomikuj.pl</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #4a90e2;
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #357abd;
+        }
+        .alert {
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .alert-error {
+            background: #ffe6e6;
+            border: 1px solid #ffcccc;
+            color: #cc0000;
+        }
+        .alert-success {
+            background: #e6ffe6;
+            border: 1px solid #ccffcc;
+            color: #006600;
+        }
+        .info {
+            background: #f0f8ff;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #4a90e2;
+            border-radius: 0 5px 5px 0;
+        }
+        .example-accounts {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🐹 Chomikuj.pl</h1>
+            <p>Zaloguj się na swoje konto</p>
+        </div>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
-          {% for category, msg in messages %}
-            <div class="alert alert-{{ 'danger' if category=='error' else category }} alert-dismissible fade show" role="alert">
-              {{ msg }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-          {% endfor %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
         {% endwith %}
-        <form method="post" action="/login">
-          <div class="mb-3">
-            <label for="username" class="form-label">Login lub email</label>
-            <input type="text" class="form-control" id="username" name="username" required autofocus>
-          </div>
-          <div class="mb-3">
-            <label for="password" class="form-label">Hasło</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Zaloguj się</button>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Login/Email:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Hasło:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn">Zaloguj się do Chomikuj.pl</button>
         </form>
-      </div>
+
+        <div class="info">
+            <h3>ℹ️ Informacje</h3>
+            <p>Ta aplikacja używa Twojego prawdziwego loginu i hasła do Chomikuj.pl aby zalogować się na Twoje konto.</p>
+            <p><strong>Bezpieczeństwo:</strong> Dane są wysyłane bezpośrednio do serwerów Chomikuj.pl - aplikacja nie przechowuje Twoich danych.</p>
+        </div>
     </div>
-  </div>
-</div>
-{% endblock %}
+</body>
+</html>

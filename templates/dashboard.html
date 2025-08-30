@@ -1,18 +1,171 @@
-{% extends "base.html" %}
-{% block title %}Panel{% endblock %}
-{% block content %}
-<div class="row">
-  <div class="col-md-8 mx-auto">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h3 class="card-title">Witaj, {{ user_info.username }}</h3>
-        <p class="text-success"><i class="bi bi-check-circle-fill"></i> {{ user_info.status }}</p>
-        <div class="d-grid gap-2 my-4">
-          <a href="/browse" class="btn btn-outline-primary">Przeglądaj pliki</a>
-          <a href="/logout" class="btn btn-outline-danger">Wyloguj</a>
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel - Chomikuj.pl</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .welcome {
+            color: #4a90e2;
+            font-size: 2em;
+            margin: 0;
+        }
+        .status {
+            background: #e6ffe6;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .action-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s;
+        }
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #4a90e2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #357abd;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .emoji {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .alert {
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background: #e6ffe6;
+            border: 1px solid #ccffcc;
+            color: #006600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="welcome">🐹 Witaj w Chomikuj.pl!</h1>
         </div>
-      </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="status">
+            <h3>✅ Status połączenia</h3>
+            <p><strong>Zalogowany jako:</strong> {{ user_info.username }}</p>
+            <p><strong>Status:</strong> {{ user_info.status }}</p>
+            <p><strong>Czas logowania:</strong> {{ moment().format('DD.MM.YYYY HH:mm') if moment else 'Teraz' }}</p>
+        </div>
+
+        <div class="actions">
+            <div class="action-card">
+                <div class="emoji">📁</div>
+                <h3>Przeglądaj pliki</h3>
+                <p>Dostęp do Twoich plików na Chomikuj.pl</p>
+                <a href="/browse" class="btn">Otwórz</a>
+            </div>
+
+            <div class="action-card">
+                <div class="emoji">📤</div>
+                <h3>Upload plików</h3>
+                <p>Wyślij nowe pliki na swoje konto</p>
+                <a href="#" class="btn" onclick="alert('Funkcja w przygotowaniu')">Wkrótce</a>
+            </div>
+
+            <div class="action-card">
+                <div class="emoji">🔍</div>
+                <h3>Wyszukaj</h3>
+                <p>Znajdź pliki innych użytkowników</p>
+                <a href="#" class="btn" onclick="alert('Funkcja w przygotowaniu')">Wkrótce</a>
+            </div>
+
+            <div class="action-card">
+                <div class="emoji">⚙️</div>
+                <h3>Ustawienia</h3>
+                <p>Zarządzaj swoim kontem</p>
+                <a href="#" class="btn" onclick="alert('Funkcja w przygotowaniu')">Wkrótce</a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/logout" class="btn btn-danger">Wyloguj się</a>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #f0f8ff; border-radius: 5px;">
+            <h3>ℹ️ Informacje o aplikacji</h3>
+            <p>Ta aplikacja pozwala na logowanie się do Chomikuj.pl z dowolnego miejsca na świecie przez przeglądarkę internetową.</p>
+            <p><strong>Funkcje:</strong></p>
+            <ul>
+                <li>✅ Logowanie do Chomikuj.pl</li>
+                <li>✅ Utrzymanie sesji</li>
+                <li>🔄 Przeglądanie plików (w przygotowaniu)</li>
+                <li>🔄 Upload plików (w przygotowaniu)</li>
+                <li>🔄 Pobieranie plików (w przygotowaniu)</li>
+            </ul>
+        </div>
     </div>
-  </div>
-</div>
-{% endblock %}
+</body>
+</html>
