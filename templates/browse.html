@@ -1,9 +1,15 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head><meta charset="UTF-8"><title>Przeglądaj</title></head>
-<body>
-  <h1>Przegląd plików</h1>
-  <p>Funkcja w przygotowaniu. Jesteś zalogowany jako {{username}}.</p>
-  <a href="/">Powrót</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Przeglądaj pliki{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8 mx-auto text-center">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title mb-3">📁 Przegląd plików</h3>
+        <p class="text-muted mb-4">Funkcja w przygotowaniu.<br>Jesteś zalogowany jako <strong>{{ username }}</strong>.</p>
+        <a href="/" class="btn btn-primary">Powrót do panelu</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

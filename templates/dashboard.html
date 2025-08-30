@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head><meta charset="UTF-8"><title>Panel</title></head>
-<body>
-  <h1>Witaj, {{user_info.username}}</h1>
-  <p>Status: {{user_info.status}}</p>
-  <a href="/browse">Przeglądaj pliki</a>
-  <a href="/logout">Wyloguj</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Panel{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8 mx-auto">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title">Witaj, {{ user_info.username }}</h3>
+        <p class="text-success"><i class="bi bi-check-circle-fill"></i> {{ user_info.status }}</p>
+        <div class="d-grid gap-2 my-4">
+          <a href="/browse" class="btn btn-outline-primary">Przeglądaj pliki</a>
+          <a href="/logout" class="btn btn-outline-danger">Wyloguj</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
