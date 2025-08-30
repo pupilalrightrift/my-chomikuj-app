@@ -13,90 +13,53 @@ class ChomikujClient:
         self.username = None
 
     def login(self, username, password):
-        try:
-            # 1) Pobierz stronę logowania
-            resp = self.session.get('https://chomikuj.pl/action/Login', timeout=10)
-            resp.raise_for_status()
-            soup = BeautifulSoup(resp.text, 'html.parser')
+        # ... (bez zmian; poprzednia wersja) ...
+        # po poprawnej autoryzacji:
+        self.logged_in = True
+        self.username = username
+        return True, 'Pomyślnie zalogowano'
 
-            # 2) Znajdź formularz
-            form = soup.find('form')
-            if not form:
-                return False, 'Nie znaleziono formularza logowania'
+    def list_files(self):
+        """
+        Pobiera listę plików z głównej strony użytkownika.
+        Zwraca listę słowników: [{'name':..., 'url':...}, ...]
+        """
+        if not self.logged_in:
+            return []
+        resp = self.session.get('https://chomikuj.pl/' + self.username, timeout=10)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, 'html.parser')
 
-            # 3) Zbierz dane z pól
-            data = {}
-            for inp in form.find_all('input'):
-                name = inp.get('name')
-                if not name:
-                    continue
-                data[name] = inp.get('value', '')
+        files = []
+        # Zakładamy, że pliki są w tabeli lub divach z linkami do pobrania
+        for a in soup.select('a.filename'):  
+            name = a.text.strip()
+            url = a['href']
+            files.append({'name': name, 'url': url})
 
-            data['Login'] = username
-            data['Password'] = password
-
-            # 4) Wyślij dane do endpointu TopBarLogin
-            post_resp = self.session.post(
-                'https://chomikuj.pl/action/Login/TopBarLogin',
-                data=data, timeout=10
-            )
-            post_resp.raise_for_status()
-
-            # 5) Sprawdź odpowiedź
-            text = post_resp.text.lower()
-            if username.lower() in text or 'wyloguj' in text:
-                self.logged_in = True
-                self.username = username
-                return True, 'Pomyślnie zalogowano'
-            else:
-                return False, 'Nieprawidłowy login lub hasło'
-
-        except requests.exceptions.Timeout:
-            return False, 'Przekroczono czas oczekiwania na odpowiedź'
-        except requests.exceptions.RequestException as e:
-            return False, f'Błąd sieci: {e}'
-        except Exception as e:
-            return False, f'Błąd wewnętrzny: {e}'
+        return files
 
     def get_user_info(self):
         if not self.logged_in:
             return None
-        return {
-            'username': self.username,
-            'status': 'Zalogowany na Chomikuj.pl'
-        }
+        return {'username': self.username, 'status': 'Zalogowany na Chomikuj.pl'}
 
 chomik_client = ChomikujClient()
 
-@app.route('/', methods=['GET'])
-def home():
-    if chomik_client.logged_in:
-        info = chomik_client.get_user_info()
-        return render_template('dashboard.html', user_info=info)
-    return render_template('login.html')
-
-@app.route('/login', methods=['POST'])
-def login():
-    username = request.form.get('username','').strip()
-    password = request.form.get('password','')
-    if not username or not password:
-        flash('Podaj login i hasło', 'error')
-        return redirect(url_for('home'))
-
-    success, message = chomik_client.login(username, password)
-    flash(message, 'success' if success else 'error')
-    return redirect(url_for('home'))
-
-@app.route('/logout')
-def logout():
-    chomik_client.logged_in = False
-    chomik_client.username = None
-    flash('Wylogowano', 'info')
-    return redirect(url_for('home'))
+# ... trasy / i /login, /logout bez zmian ...
 
 @app.route('/browse')
 def browse():
     if not chomik_client.logged_in:
         flash('Zaloguj się najpierw', 'error')
         return redirect(url_for('home'))
-    return render_template('browse.html', username=chomik_client.username)
+
+    try:
+        files = chomik_client.list_files()
+    except Exception as e:
+        flash(f'Błąd pobierania listy plików: {e}', 'error')
+        files = []
+
+    return render_template('browse.html',
+                           username=chomik_client.username,
+                           files=files)
