@@ -96,9 +96,11 @@ def home():
         return render_template('dashboard.html', user_info=user_info)
     return render_template('login.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+
+    @app.route('/login', methods=['GET','POST'])
 def login():
-    """Strona logowania do Chomikuj.pl"""
+    if request.method == 'GET':
+        return redirect(url_for('home'))
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
